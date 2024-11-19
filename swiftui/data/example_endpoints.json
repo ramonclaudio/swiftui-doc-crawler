@@ -1,0 +1,45 @@
+{
+    "interfaceLanguages": {
+        "swift": [
+            {
+                "path": "/documentation/swiftui",
+                "title": "SwiftUI",
+                "type": "module",
+                "children": [
+                    {
+                        "title": "App structure",
+                        "type": "groupMarker"
+                    },
+                    {
+                        "path": "/documentation/swiftui/app-organization",
+                        "title": "App organization",
+                        "type": "collection",
+                        "children": [
+                            {
+                                "path": "/documentation/swiftui/app",
+                                "title": "App",
+                                "type": "protocol",
+                                "children": [
+                                    {
+                                        "title": "Implementing an app",
+                                        "type": "groupMarker"
+                                    },
+                                    {
+                                        "path": "/documentation/swiftui/app/body-swift.property",
+                                        "title": "var body: Self.Body",
+                                        "type": "property"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "schemaVersion": {
+        "major": 0,
+        "minor": 1,
+        "patch": 0
+    }
+}
