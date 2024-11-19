@@ -1,3 +1,7 @@
 # API Configuration
 base_url: "https://developer.apple.com"
 docs_endpoint: "/tutorials/data/documentation/"
+
+# Data Configuration
+endpoint_file: "swiftui/data/endpoints.json"
+processed_endpoint_file: "swiftui/data/processed_endpoints.json"
