@@ -148,3 +148,6 @@ Thumbs.db
 
 # Data Output
 /data/output/
+
+# Ignore Processed Data
+/data/processed/
