@@ -65,3 +65,6 @@ class Config:
         
         package_root = Path(os.path.dirname(__file__)).parent.parent
         return os.path.join(package_root, path)
+    
+    def should_include_section(self, section_name):
+        return self.sections.get(section_name, True)
