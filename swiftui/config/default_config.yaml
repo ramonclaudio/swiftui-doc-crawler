@@ -5,3 +5,6 @@ docs_endpoint: "/tutorials/data/documentation/"
 # Data Configuration
 endpoint_file: "swiftui/data/endpoints.json"
 processed_endpoint_file: "swiftui/data/processed_endpoints.json"
+
+# Output Configuration
+output_dir: "output/docs"
