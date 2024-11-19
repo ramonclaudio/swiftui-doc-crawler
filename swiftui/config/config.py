@@ -1,0 +1,70 @@
+# Prevent caching of bytecode
+import sys
+sys.dont_write_bytecode = True
+
+import yaml
+import os
+from pathlib import Path
+
+class Config:
+    def __init__(self, config_path=None):
+        if config_path is None:
+            config_path = os.path.join(os.path.dirname(__file__), 'default_config.yaml')
+        
+        with open(config_path, 'r') as file:
+            self.config = yaml.safe_load(file)
+        
+        self.base_url = self.config['base_url']
+        self.docs_endpoint = self.config['docs_endpoint']
+        
+        self.endpoint_file = self._ensure_absolute_path(self.config['endpoint_file'])
+        self.processed_endpoint_file = self._ensure_absolute_path(self.config['processed_endpoint_file'])
+        self.data_dir = os.path.dirname(self.endpoint_file)
+        
+        self.output_dir = self._ensure_absolute_path(self.config['output_dir'])
+        
+        self.include_links = self.config.get('include_links', False)
+        
+        self.sections = self.config.get('sections', {})
+        self._set_section_defaults()
+        
+        self.use_proxy = self.config.get('use_proxy', False)
+        self.request_delay = self.config['request_delay']
+        self.timeout = self.config['timeout']
+        self.max_retries = self.config['max_retries']
+        
+        self.ignored_endpoints = set(self.config.get('ignored_endpoints', []))
+        
+        os.makedirs(self.output_dir, exist_ok=True)
+        os.makedirs(self.data_dir, exist_ok=True)
+    
+    def _set_section_defaults(self):
+        default_sections = {
+            'title': True,
+            'abstract': True,
+            'availability': False,
+            'declaration': True,
+            'parameters': True,
+            'discussion': True,
+            'topics': False,
+            'relationships': True,
+            'return_value': True,
+            'see_also': False,
+            'required': True,
+            'details': True,
+            'notes': True
+        }
+        
+        for section, default_value in default_sections.items():
+            if section not in self.sections:
+                self.sections[section] = default_value
+    
+    def _ensure_absolute_path(self, path):
+        if os.path.isabs(path):
+            return path
+        
+        package_root = Path(os.path.dirname(__file__)).parent.parent
+        return os.path.join(package_root, path)
+    
+    def should_include_section(self, section_name):
+        return self.sections.get(section_name, True)
