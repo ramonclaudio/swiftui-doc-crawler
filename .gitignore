@@ -152,3 +152,4 @@ Thumbs.db
 # Ignore Processed Data
 /data/processed/
 /data/processed
+data/processed/processed_endpoints.json
