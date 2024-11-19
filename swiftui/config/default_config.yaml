@@ -3,11 +3,11 @@ base_url: "https://developer.apple.com"
 docs_endpoint: "/tutorials/data/documentation/"
 
 # Data Configuration
-endpoint_file: "swiftui/data/endpoints.json"
-processed_endpoint_file: "swiftui/data/processed_endpoints.json"
+endpoint_file: "data/raw/endpoints.json"
+processed_endpoint_file: "data/processed/processed_endpoints.json"
 
 # Output Configuration
-output_dir: "output/docs"
+output_dir: "data/output"
 
 # Markdown Content Configuration
 include_links: False
@@ -16,15 +16,15 @@ include_links: False
 sections:
   title: True          # Title of the documentation
   abstract: True       # Abstract/overview section
-  availability: False   # Platform availability information
+  availability: False  # Platform availability information
   declaration: True    # Swift declarations
   parameters: True     # Function/method parameters
   discussion: True     # Discussion/content sections
-  topics: False        # Related topics section
+  topics: False       # Related topics section
   relationships: True  # Protocol conformance and other relationships
   return_value: True   # Return value descriptions
-  see_also: False      # See also section
-  required: True       # Required flag marker
+  see_also: False     # See also section
+  required: True      # Required flag marker
   details: True       # Details section
   notes: True         # Notes section
 
