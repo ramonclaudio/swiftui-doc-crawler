@@ -8,3 +8,22 @@ processed_endpoint_file: "swiftui/data/processed_endpoints.json"
 
 # Output Configuration
 output_dir: "output/docs"
+
+# Markdown Content Configuration
+include_links: False
+
+# Section Controls
+sections:
+  title: True          # Title of the documentation
+  abstract: True       # Abstract/overview section
+  availability: False   # Platform availability information
+  declaration: True    # Swift declarations
+  parameters: True     # Function/method parameters
+  discussion: True     # Discussion/content sections
+  topics: False        # Related topics section
+  relationships: True  # Protocol conformance and other relationships
+  return_value: True   # Return value descriptions
+  see_also: False      # See also section
+  required: True       # Required flag marker
+  details: True       # Details section
+  notes: True         # Notes section
