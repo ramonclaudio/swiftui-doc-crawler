@@ -151,3 +151,4 @@ Thumbs.db
 
 # Ignore Processed Data
 /data/processed/
+/data/processed
