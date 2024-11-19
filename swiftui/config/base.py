@@ -4,6 +4,7 @@ sys.dont_write_bytecode = True
 
 import yaml
 import os
+from pathlib import Path
 
 class Config:
     def __init__(self, config_path=None):
@@ -36,3 +37,24 @@ class Config:
         
         os.makedirs(self.output_dir, exist_ok=True)
         os.makedirs(self.data_dir, exist_ok=True)
+    
+    def _set_section_defaults(self):
+        default_sections = {
+            'title': True,
+            'abstract': True,
+            'availability': False,
+            'declaration': True,
+            'parameters': True,
+            'discussion': True,
+            'topics': False,
+            'relationships': True,
+            'return_value': True,
+            'see_also': False,
+            'required': True,
+            'details': True,
+            'notes': True
+        }
+        
+        for section, default_value in default_sections.items():
+            if section not in self.sections:
+                self.sections[section] = default_value
