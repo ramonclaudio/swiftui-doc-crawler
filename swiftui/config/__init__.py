@@ -2,6 +2,6 @@
 import sys
 sys.dont_write_bytecode = True
 
-from .base import Config
+from .config import Config
 
 __all__ = ['Config']
