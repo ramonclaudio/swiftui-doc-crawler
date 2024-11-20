@@ -1,0 +1,3 @@
+# API Configuration
+base_url: "https://developer.apple.com"
+docs_endpoint: "/tutorials/data/documentation/"
