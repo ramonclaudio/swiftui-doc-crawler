@@ -33,3 +33,16 @@ use_proxy: True
 request_delay: 1.0
 timeout: 30
 max_retries: 3
+
+# Endpoint Configuration
+ignored_endpoints:
+  - "/tutorials/swiftui"
+  - "/tutorials/swiftui-concepts"
+  - "/tutorials/sample-apps"
+  - "/documentation/updates/swiftui"
+  - "/documentation/visionos/destination-video"
+  - "/documentation/visionos/world"
+  - "/documentation/swiftui/backyard-birds-sample"
+  - "/documentation/swiftui/food_truck_building_a_swiftui_multiplatform_app"
+  - "/documentation/appclip/fruta_building_a_feature-rich_app_with_swiftui"
+  - "/documentation/swiftui/migrating-to-the-swiftui-life-cycle"
