@@ -4,6 +4,7 @@ sys.dont_write_bytecode = True
 
 import yaml
 import os
+from pathlib import Path
 
 class Config:
     def __init__(self, config_path=None):
@@ -57,3 +58,10 @@ class Config:
         for section, default_value in default_sections.items():
             if section not in self.sections:
                 self.sections[section] = default_value
+    
+    def _ensure_absolute_path(self, path):
+        if os.path.isabs(path):
+            return path
+        
+        package_root = Path(os.path.dirname(__file__)).parent.parent
+        return os.path.join(package_root, path)
