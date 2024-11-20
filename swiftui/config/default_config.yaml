@@ -5,3 +5,6 @@ docs_endpoint: "/tutorials/data/documentation/"
 # Data Configuration
 endpoint_file: "data/raw/endpoints.json"
 processed_endpoint_file: "data/processed/processed_endpoints.json"
+
+# Output Configuration
+output_dir: "data/output"
