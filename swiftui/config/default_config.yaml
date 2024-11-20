@@ -27,3 +27,9 @@ sections:
   required: True      # Required flag marker
   details: True       # Details section
   notes: True         # Notes section
+
+# Request Configuration
+use_proxy: True
+request_delay: 1.0
+timeout: 30
+max_retries: 3
