@@ -3,6 +3,8 @@ import sys
 sys.dont_write_bytecode = True
 
 import os
+import time
+import requests
 from dotenv import load_dotenv
 from requests.auth import HTTPProxyAuth
 
@@ -31,3 +33,31 @@ class Client:
         else:
             self.proxies = None
             self.auth = None
+        
+    def make_request(self, method, path):
+        clean_path = path.lstrip('/') + '.json'
+        url = f"{self.config.base_url}{self.config.docs_endpoint}{clean_path}"
+        
+        time.sleep(self.config.request_delay)
+        
+        try:
+            if self.config.use_proxy:
+                response = requests.request(
+                    method,
+                    url,
+                    proxies=self.proxies,
+                    auth=self.auth,
+                    timeout=self.config.timeout
+                )
+            else:
+                response = requests.request(
+                    method,
+                    url,
+                    timeout=self.config.timeout
+                )
+                
+            response.raise_for_status()
+            return response.json()
+            
+        except requests.exceptions.RequestException as e:
+            raise Exception(f"API request failed: {str(e)}")
