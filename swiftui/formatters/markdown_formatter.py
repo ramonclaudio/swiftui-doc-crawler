@@ -26,3 +26,31 @@ class MarkdownFormatter:
             ref = references[identifier]
             return ref.get('title', '')
         return ''
+
+    def _format_inline_content(self, inline_content, references=None):
+        text_parts = []
+        for inline in inline_content:
+            if inline['type'] == 'text':
+                text = inline['text'].strip()
+                if text:
+                    text_parts.append(text)
+            elif inline['type'] == 'codeVoice':
+                text_parts.append(f"`{inline['code']}`")
+            elif inline['type'] == 'reference':
+                title = None
+                if references and 'identifier' in inline:
+                    title = self._get_reference_title(inline['identifier'], references)
+                
+                if not title:
+                    title = inline.get('title', '')
+                if not title and 'identifier' in inline:
+                    title = inline['identifier'].split('/')[-1] if 'documentation' in inline['identifier'] else ''
+                
+                if title:
+                    if inline.get('is_active', False):
+                        text_parts.append(f"`{title}`")
+                    else:
+                        url = inline.get('identifier', '')
+                        text_parts.append(self._parse_link(title, url))
+                        
+        return ' '.join(part for part in text_parts if part)
