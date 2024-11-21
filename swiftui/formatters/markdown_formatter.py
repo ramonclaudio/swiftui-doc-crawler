@@ -20,3 +20,9 @@ class MarkdownFormatter:
                 url = f"{self.config.base_url}/documentation/{clean_url}"
             return f"[{title}]({url})"
         return title
+
+    def _get_reference_title(self, identifier, references):
+        if identifier in references:
+            ref = references[identifier]
+            return ref.get('title', '')
+        return ''
