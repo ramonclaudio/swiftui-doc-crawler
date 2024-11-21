@@ -2,6 +2,8 @@
 import sys
 sys.dont_write_bytecode = True
 
+import os
+
 class MarkdownFormatter:
     def __init__(self, config):
         self.config = config
@@ -181,3 +183,23 @@ class MarkdownFormatter:
                                 markdown.append(f"\n- {self._parse_link(title, url)}")
         
         return '\n'.join(markdown)
+    
+    def save_markdown(self, filename, content, folder_path=''):
+        sanitized_folder = folder_path.replace(' ', '_').lower() if folder_path else ''
+        sanitized_filename = filename.replace(' ', '_').replace('.', '_').lower()
+        
+        if not sanitized_folder:
+            sanitized_folder = sanitized_filename
+        
+        if sanitized_folder:
+            full_folder_path = os.path.join(self.output_dir, sanitized_folder)
+        else:
+            full_folder_path = os.path.join(self.output_dir, sanitized_filename)
+        
+        full_path = os.path.join(full_folder_path, f"{sanitized_filename}.md")
+        
+        os.makedirs(full_folder_path, exist_ok=True)
+        
+        with open(full_path, 'w', encoding='utf-8') as file:
+            file.write(content)
+        print(f"Saved: {full_path}")
