@@ -26,3 +26,13 @@ class DocumentParser:
             'platforms': self._parse_platforms(metadata.get('platforms', [])),
             'required': metadata.get('required', False)
         }
+
+    def _parse_platforms(self, platforms):
+        parsed_platforms = []
+        for platform in platforms:
+            parsed_platforms.append({
+                'name': platform.get('name', ''),
+                'introduced': platform.get('introducedAt', ''),
+                'deprecated': platform.get('deprecated', False)
+            })
+        return parsed_platforms
