@@ -54,3 +54,21 @@ class DocumentParser:
                 
             parsed_abstract.append(parsed_item)
         return parsed_abstract
+
+    def _parse_sections(self, sections):
+        parsed_sections = []
+        for section in sections:
+            parsed_section = {
+                'kind': section.get('kind', ''),
+                'content': []
+            }
+            
+            if section['kind'] == 'parameters':
+                parsed_section['parameters'] = self._parse_parameters(section.get('parameters', []))
+            elif section['kind'] == 'declarations':
+                parsed_section['declarations'] = self._parse_declarations(section.get('declarations', []))
+            elif section['kind'] == 'content':
+                parsed_section['content'] = self._parse_content(section.get('content', []))
+            
+            parsed_sections.append(parsed_section)
+        return parsed_sections
