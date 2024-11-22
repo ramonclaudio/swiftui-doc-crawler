@@ -3,6 +3,7 @@ import sys
 sys.dont_write_bytecode = True
 
 import json
+import os
 from datetime import datetime
 
 class MetadataParser:
@@ -33,3 +34,12 @@ class MetadataParser:
                 "failed_endpoints": {},
                 "deprecated_endpoints": {}
             }
+    
+    def _save_data(self):
+        data_to_save = self.data.copy()
+        data_to_save["metadata"]["last_updated"] = datetime.now().isoformat()
+        
+        os.makedirs(os.path.dirname(self.filepath), exist_ok=True)
+        
+        with open(self.filepath, 'w') as file:
+            json.dump(data_to_save, file, indent=2, sort_keys=True)
