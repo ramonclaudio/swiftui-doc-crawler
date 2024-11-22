@@ -143,3 +143,14 @@ class DocumentParser:
                 
             parsed_inline.append(parsed_item)
         return parsed_inline
+
+    def _parse_relationships(self, relationships):
+        parsed_rels = []
+        for rel in relationships:
+            parsed_rel = {
+                'type': rel.get('type', ''),
+                'title': rel.get('title', ''),
+                'identifiers': rel.get('identifiers', [])
+            }
+            parsed_rels.append(parsed_rel)
+        return parsed_rels
