@@ -2,8 +2,8 @@
 import sys
 sys.dont_write_bytecode = True
 
-import json
 import os
+import json
 from datetime import datetime
 
 class MetadataParser:
@@ -81,3 +81,11 @@ class MetadataParser:
         
         self.data["failed_endpoints"][endpoint] = current_failures
         self._save_data()
+    
+    def get_statistics(self):
+        return {
+            "total_parsed": len(self.data["processed_endpoints"]),
+            "total_failed": len(self.data["failed_endpoints"]),
+            "total_deprecated": len(self.data["deprecated_endpoints"]),
+            "last_updated": self.data["metadata"]["last_updated"]
+        }
