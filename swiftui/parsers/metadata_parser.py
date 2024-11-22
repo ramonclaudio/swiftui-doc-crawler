@@ -43,3 +43,16 @@ class MetadataParser:
         
         with open(self.filepath, 'w') as file:
             json.dump(data_to_save, file, indent=2, sort_keys=True)
+    
+    def should_parse(self, endpoint, is_deprecated=False):
+        if is_deprecated:
+            self.mark_deprecated(endpoint, "Current API deprecation")
+            return False, "Deprecated endpoint"
+            
+        if endpoint in self.data["deprecated_endpoints"]:
+            return False, f"Previously marked as deprecated: {self.data['deprecated_endpoints'][endpoint].get('reason', 'Unknown reason')}"
+            
+        if endpoint in self.data["processed_endpoints"]:
+            return False, "Already parsed"
+            
+        return True, "Ready for parsing"
