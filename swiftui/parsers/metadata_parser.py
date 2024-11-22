@@ -56,3 +56,11 @@ class MetadataParser:
             return False, "Already parsed"
             
         return True, "Ready for parsing"
+    
+    def mark_deprecated(self, endpoint, reason="Not specified"):
+        if endpoint not in self.data["deprecated_endpoints"]:
+            self.data["deprecated_endpoints"][endpoint] = {
+                "marked_at": datetime.now().isoformat(),
+                "reason": reason
+            }
+            self._save_data()
