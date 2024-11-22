@@ -36,3 +36,21 @@ class DocumentParser:
                 'deprecated': platform.get('deprecated', False)
             })
         return parsed_platforms
+
+    def _parse_abstract(self, abstract):
+        if not abstract:
+            return []
+        
+        parsed_abstract = []
+        for item in abstract:
+            parsed_item = {
+                'type': item.get('type', ''),
+                'text': item.get('text', ''),
+                'code': item.get('code', '')
+            }
+            
+            if 'inlineContent' in item:
+                parsed_item['content'] = self._parse_inline_content(item['inlineContent'])
+                
+            parsed_abstract.append(parsed_item)
+        return parsed_abstract
