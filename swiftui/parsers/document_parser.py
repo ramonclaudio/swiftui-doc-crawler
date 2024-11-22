@@ -98,3 +98,27 @@ class DocumentParser:
                 
             parsed_decls.append(parsed_decl)
         return parsed_decls
+
+    def _parse_content(self, content):
+        parsed_content = []
+        for item in content:
+            parsed_item = {
+                'type': item.get('type', '')
+            }
+            
+            if item['type'] == 'paragraph':
+                parsed_item['content'] = self._parse_inline_content(item.get('inlineContent', []))
+            elif item['type'] == 'codeListing':
+                parsed_item['code'] = item.get('code', [])
+            elif item['type'] == 'heading':
+                parsed_item['text'] = item.get('text', '')
+                parsed_item['level'] = item.get('level', 1)
+            elif item['type'] == 'aside':
+                parsed_item.update({
+                    'style': item.get('style', ''),
+                    'name': item.get('name', ''),
+                    'content': self._parse_content(item.get('content', []))
+                })
+                
+            parsed_content.append(parsed_item)
+        return parsed_content
