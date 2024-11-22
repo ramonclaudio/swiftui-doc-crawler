@@ -154,3 +154,13 @@ class DocumentParser:
             }
             parsed_rels.append(parsed_rel)
         return parsed_rels
+
+    def _parse_references(self, references):
+        parsed_refs = {}
+        for ref_id, ref_data in references.items():
+            parsed_refs[ref_id] = {
+                'title': ref_data.get('title', ''),
+                'url': ref_data.get('url', ''),
+                'type': ref_data.get('type', '')
+            }
+        return parsed_refs
