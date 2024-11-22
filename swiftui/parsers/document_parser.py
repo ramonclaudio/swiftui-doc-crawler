@@ -122,3 +122,24 @@ class DocumentParser:
                 
             parsed_content.append(parsed_item)
         return parsed_content
+
+    def _parse_inline_content(self, inline_content):
+        parsed_inline = []
+        for content in inline_content:
+            parsed_item = {
+                'type': content.get('type', '')
+            }
+            
+            if content['type'] == 'text':
+                parsed_item['text'] = content.get('text', '')
+            elif content['type'] == 'codeVoice':
+                parsed_item['code'] = content.get('code', '')
+            elif content['type'] == 'reference':
+                parsed_item.update({
+                    'identifier': content.get('identifier', ''),
+                    'title': content.get('title', ''),
+                    'is_active': content.get('isActive', False)
+                })
+                
+            parsed_inline.append(parsed_item)
+        return parsed_inline
