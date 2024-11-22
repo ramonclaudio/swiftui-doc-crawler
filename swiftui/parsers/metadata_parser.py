@@ -64,3 +64,11 @@ class MetadataParser:
                 "reason": reason
             }
             self._save_data()
+    
+    def mark_parsed(self, endpoint, metadata=None):
+        self.data["processed_endpoints"][endpoint] = {
+            "parsed_at": datetime.now().isoformat(),
+            "metadata": metadata or {}
+        }
+        self.data["failed_endpoints"].pop(endpoint, None)
+        self._save_data()
