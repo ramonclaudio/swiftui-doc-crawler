@@ -72,3 +72,13 @@ class DocumentParser:
             
             parsed_sections.append(parsed_section)
         return parsed_sections
+
+    def _parse_parameters(self, parameters):
+        parsed_params = []
+        for param in parameters:
+            parsed_param = {
+                'name': param.get('name', ''),
+                'content': self._parse_content(param.get('content', []))
+            }
+            parsed_params.append(parsed_param)
+        return parsed_params
