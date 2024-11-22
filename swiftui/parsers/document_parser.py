@@ -18,3 +18,11 @@ class DocumentParser:
             return self.parsed_data
         except Exception as e:
             raise Exception(f"Documentation parsing failed: {str(e)}")
+
+    def _parse_metadata(self, metadata):
+        return {
+            'title': metadata.get('title', ''),
+            'role_heading': metadata.get('roleHeading', ''),
+            'platforms': self._parse_platforms(metadata.get('platforms', [])),
+            'required': metadata.get('required', False)
+        }
