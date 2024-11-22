@@ -72,3 +72,12 @@ class MetadataParser:
         }
         self.data["failed_endpoints"].pop(endpoint, None)
         self._save_data()
+    
+    def mark_failed(self, endpoint, error_message):
+        current_failures = self.data["failed_endpoints"].get(endpoint, {"attempts": 0})
+        current_failures["attempts"] += 1
+        current_failures["last_error"] = error_message
+        current_failures["last_attempt"] = datetime.now().isoformat()
+        
+        self.data["failed_endpoints"][endpoint] = current_failures
+        self._save_data()
