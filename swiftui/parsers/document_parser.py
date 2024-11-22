@@ -82,3 +82,19 @@ class DocumentParser:
             }
             parsed_params.append(parsed_param)
         return parsed_params
+
+    def _parse_declarations(self, declarations):
+        parsed_decls = []
+        for decl in declarations:
+            parsed_decl = {
+                'tokens': decl.get('tokens', []),
+                'languages': decl.get('languages', [])
+            }
+            
+            if 'otherDeclarations' in decl:
+                parsed_decl['other_declarations'] = self._parse_declarations(
+                    decl['otherDeclarations'].get('declarations', [])
+                )
+                
+            parsed_decls.append(parsed_decl)
+        return parsed_decls
