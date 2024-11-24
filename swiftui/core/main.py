@@ -134,3 +134,106 @@ class Main:
                     if result:
                         return result
         return None
+
+    def parse_collection(self, collection_path):
+        try:
+            with open(self.config.endpoint_file, 'r', encoding='utf-8') as file:
+                endpoint_data = json.load(file)
+            
+            collection = self.find_collection(endpoint_data, collection_path)
+            if not collection:
+                raise ValueError(f"Collection {collection_path} not found")
+
+            self.endpoint_parser.parse(collection)
+            results = []
+            total_endpoints = len(self.endpoint_parser.endpoints)
+            
+            print(f"\nParsing collection: {collection_path}")
+            print(f"Found {total_endpoints} endpoints in collection")
+            
+            for index, endpoint_info in enumerate(self.endpoint_parser.endpoints, 1):
+                path = endpoint_info['path']
+                is_deprecated = endpoint_info.get('deprecated', False)
+                
+                if path in self.config.ignored_endpoints:
+                    results.append({
+                        'path': path,
+                        'status': 'skipped',
+                        'reason': 'ignored endpoint'
+                    })
+                    print(f"[{index}/{total_endpoints}] Skipping ignored endpoint: {path}")
+                    continue
+                
+                should_parse, reason = self.metadata_parser.should_parse(
+                    path, 
+                    is_deprecated=is_deprecated
+                )
+                
+                if not should_parse:
+                    results.append({
+                        'path': path,
+                        'status': 'skipped',
+                        'reason': reason
+                    })
+                    print(f"[{index}/{total_endpoints}] Skipping endpoint: {path} - {reason}")
+                    continue
+                
+                try:
+                    folder_path = endpoint_info['folder_path']
+                    filename = endpoint_info['filename']
+                    doc_path = endpoint_info['doc_path']
+                    
+                    print(f"[{index}/{total_endpoints}] Parsing: {path}")
+                    print(f"Folder path: {folder_path}")
+                    print(f"Filename: {filename}")
+                    
+                    success = self.parse_doc(doc_path, filename, folder_path)
+                    
+                    if success:
+                        self.metadata_parser.mark_parsed(path, {
+                            "folder_path": folder_path,
+                            "filename": filename,
+                            "doc_path": doc_path
+                        })
+                        results.append({
+                            'path': path,
+                            'status': 'success'
+                        })
+                        print(f"Successfully parsed: {path}")
+                        time.sleep(self.config.request_delay)
+                    else:
+                        self.metadata_parser.mark_failed(path, "Parsing failed")
+                        results.append({
+                            'path': path,
+                            'status': 'failed',
+                            'reason': 'parsing error'
+                        })
+                        print(f"Failed to parse: {path}")
+                        
+                except Exception as e:
+                    error_msg = str(e)
+                    self.metadata_parser.mark_failed(path, error_msg)
+                    results.append({
+                        'path': path,
+                        'status': 'failed',
+                        'reason': error_msg
+                    })
+                    print(f"Error Parsing {path}: {error_msg}")
+                    continue
+
+            success_count = sum(1 for r in results if r['status'] == 'success')
+            failed_count = sum(1 for r in results if r['status'] == 'failed')
+            skipped_count = sum(1 for r in results if r['status'] == 'skipped')
+            
+            print(f"\nCollection Parsing Complete:")
+            print(f"Total endpoints: {total_endpoints}")
+            print(f"Successfully parsed: {success_count}")
+            print(f"Failed: {failed_count}")
+            print(f"Skipped: {skipped_count}")
+            
+            return results
+
+        except Exception as e:
+            error_msg = str(e)
+            print(f"Error Parsing collection: {error_msg}")
+            return {'error': error_msg}
