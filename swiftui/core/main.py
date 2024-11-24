@@ -62,3 +62,6 @@ class Main:
         except Exception as e:
             print(f"Error parsing {endpoint}: {str(e)}")
             return False
+
+    def get_response(self):
+        return self.response
