@@ -237,3 +237,126 @@ class Main:
             error_msg = str(e)
             print(f"Error Parsing collection: {error_msg}")
             return {'error': error_msg}
+
+    def crawl(self, target_path=None, mode='all'):
+        try:
+            if mode in ['single', 'collection'] and not target_path:
+                raise ValueError("target_path is required for single endpoint and collection Parsing")
+
+            if target_path:
+                target_path = self.extract_path_from_url(target_path)
+
+            if mode == 'single':
+                result = self.parse_single_endpoint(target_path)
+                self.response = {'results': [result]}
+                return self.response
+                
+            elif mode == 'collection':
+                results = self.parse_collection(target_path)
+                self.response = {'results': results}
+                return self.response
+                
+            elif mode == 'all':
+                with open(self.config.endpoint_file, 'r', encoding='utf-8') as file:
+                    endpoint_data = json.load(file)
+                
+                self.endpoint_parser.parse(endpoint_data)
+                total_endpoints = len(self.endpoint_parser.endpoints)
+                parsed_count = 0
+                
+                print(f"Starting to parse {total_endpoints} endpoints...")
+                
+                results = []
+                for endpoint_info in self.endpoint_parser.endpoints:
+                    path = endpoint_info['path']
+                    is_deprecated = endpoint_info.get('deprecated', False)
+                    parsed_count += 1
+                    
+                    if path in self.config.ignored_endpoints:
+                        results.append({
+                            'path': path,
+                            'status': 'skipped',
+                            'reason': 'ignored endpoint'
+                        })
+                        print(f"[{parsed_count}/{total_endpoints}] Skipping ignored endpoint: {path}")
+                        continue
+                    
+                    should_parse, reason = self.metadata_parser.should_parse(
+                        path, 
+                        is_deprecated=is_deprecated
+                    )
+                    
+                    if not should_parse:
+                        results.append({
+                            'path': path,
+                            'status': 'skipped',
+                            'reason': reason
+                        })
+                        print(f"[{parsed_count}/{total_endpoints}] Skipping endpoint: {path} - {reason}")
+                        continue
+                    
+                    try:
+                        folder_path = endpoint_info['folder_path']
+                        filename = endpoint_info['filename']
+                        doc_path = endpoint_info['doc_path']
+                        
+                        print(f"[{parsed_count}/{total_endpoints}] Parsing: {path}")
+                        print(f"Folder path: {folder_path}")
+                        print(f"Filename: {filename}")
+                        
+                        success = self.parse_doc(doc_path, filename, folder_path)
+                        
+                        if success:
+                            self.metadata_parser.mark_parsed(path, {
+                                "folder_path": folder_path,
+                                "filename": filename,
+                                "doc_path": doc_path
+                            })
+                            results.append({
+                                'path': path,
+                                'status': 'success'
+                            })
+                            print(f"Successfully parsed: {path}")
+                            time.sleep(self.config.request_delay)
+                        else:
+                            self.metadata_parser.mark_failed(path, "Parsing failed")
+                            results.append({
+                                'path': path,
+                                'status': 'failed',
+                                'reason': 'Parsing error'
+                            })
+                            print(f"Failed to parse: {path}")
+                            
+                    except Exception as e:
+                        error_msg = str(e)
+                        self.metadata_parser.mark_failed(path, error_msg)
+                        results.append({
+                            'path': path,
+                            'status': 'failed',
+                            'reason': error_msg
+                        })
+                        print(f"Error Parsing {path}: {error_msg}")
+                        continue
+                
+                stats = self.metadata_parser.get_statistics()
+                self.response = {
+                    'results': results,
+                    'statistics': stats
+                }
+                
+                print("\nGenerating Statistics:")
+                print(f"Total parsed: {stats['total_parsed']}")
+                print(f"Total failed: {stats['total_failed']}")
+                print(f"Total deprecated: {stats['total_deprecated']}")
+                print(f"Last updated: {stats['last_updated']}")
+                
+                return self.response
+            
+            else:
+                raise ValueError(f"Invalid mode: {mode}. Must be 'all', 'single', or 'collection'")
+                
+        except Exception as e:
+            error_msg = f"An error occurred: {str(e)}"
+            print(error_msg)
+            self.response = {'error': error_msg}
+            return self.response
