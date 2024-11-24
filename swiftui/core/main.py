@@ -112,3 +112,25 @@ class Main:
             error_msg = str(e)
             self.metadata_parser.mark_failed(path, error_msg)
             return {'status': 'failed', 'path': path, 'reason': error_msg}
+
+    def find_collection(self, data, target_path):
+        if isinstance(data, dict):
+            if 'interfaceLanguages' in data and 'swift' in data['interfaceLanguages']:
+                return self.find_collection(data['interfaceLanguages']['swift'], target_path)
+            
+            if data.get('path') == target_path:
+                return data
+                
+            for key, value in data.items():
+                if isinstance(value, (dict, list)):
+                    result = self.find_collection(value, target_path)
+                    if result:
+                        return result
+                        
+        elif isinstance(data, list):
+            for item in data:
+                if isinstance(item, (dict, list)):
+                    result = self.find_collection(item, target_path)
+                    if result:
+                        return result
+        return None
