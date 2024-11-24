@@ -51,3 +51,14 @@ class Main:
             
         except Exception as e:
             raise ValueError(f"Invalid documentation URL or path: {str(e)}")
+    
+    def parse_doc(self, endpoint, filename, folder_path=''):
+        try:
+            doc_data = self.client.make_request(method="GET", path=endpoint)
+            parsed_data = self.document_parser.parse(doc_data)
+            markdown = self.formatter.format(parsed_data)
+            self.formatter.save_markdown(filename, markdown, folder_path)
+            return True
+        except Exception as e:
+            print(f"Error parsing {endpoint}: {str(e)}")
+            return False
