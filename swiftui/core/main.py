@@ -2,6 +2,8 @@
 import sys
 sys.dont_write_bytecode = True
 
+import json
+import time
 from pathlib import Path
 
 from ..config.config import Config
@@ -65,3 +67,48 @@ class Main:
 
     def get_response(self):
         return self.response
+
+    def parse_single_endpoint(self, path):
+        try:
+            with open(self.config.endpoint_file, 'r', encoding='utf-8') as file:
+                endpoint_data = json.load(file)
+            
+            found_endpoint = None
+            self.endpoint_parser.parse(endpoint_data)
+            for endpoint in self.endpoint_parser.endpoints:
+                if endpoint['path'] == path:
+                    found_endpoint = endpoint
+                    break
+            
+            if not found_endpoint:
+                raise ValueError(f"Endpoint {path} not found in documentation")
+
+            should_parse, reason = self.metadata_parser.should_parse(
+                path, 
+                is_deprecated=found_endpoint.get('deprecated', False)
+            )
+
+            if not should_parse:
+                return {'status': 'skipped', 'path': path, 'reason': reason}
+
+            success = self.parse_doc(
+                found_endpoint['doc_path'],
+                found_endpoint['filename'],
+                found_endpoint['folder_path']
+            )
+
+            if success:
+                self.metadata_parser.mark_parsed(path, {
+                    "folder_path": found_endpoint['folder_path'],
+                    "filename": found_endpoint['filename'],
+                    "doc_path": found_endpoint['doc_path']
+                })
+                return {'status': 'success', 'path': path}
+            else:
+                self.metadata_parser.mark_failed(path, "Parsing failed")
+                return {'status': 'failed', 'path': path, 'reason': 'parsing error'}
+
+        except Exception as e:
+            error_msg = str(e)
+            self.metadata_parser.mark_failed(path, error_msg)
+            return {'status': 'failed', 'path': path, 'reason': error_msg}
