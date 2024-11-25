@@ -12,3 +12,6 @@ class Run:
         operation = getattr(self.crawler, operation_name)
         response = operation(*args, **kwargs)
         return self.crawler.get_response()
+
+    def crawl(self, target_path=None, mode='all'):
+        return self._run('crawl', target_path=target_path, mode=mode)
