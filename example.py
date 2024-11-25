@@ -10,3 +10,6 @@ if __name__ == "__main__":
     
     # Crawl a single endpoint
     # swiftui.crawl('https://developer.apple.com/documentation/swiftui/app', mode='single')
+
+    # Crawl a collection endpoint
+    # swiftui.crawl('https://developer.apple.com/documentation/swiftui/app', mode='collection')
