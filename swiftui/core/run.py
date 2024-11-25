@@ -15,3 +15,6 @@ class Run:
 
     def crawl(self, target_path=None, mode='all'):
         return self._run('crawl', target_path=target_path, mode=mode)
+
+run = Run()
+crawl = run.crawl
